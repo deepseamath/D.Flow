@@ -6,55 +6,227 @@
 <title>D.Flow</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;background:linear-gradient(135deg,#d9e2e9,#eef3f6,#f8fafc);color:#263445}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;
+  background:linear-gradient(135deg,#d9e2e9,#eef3f6,#f8fafc);
+  color:#263445
+}
 button,input,textarea{font-family:inherit}
 .hidden{display:none!important}
+
 .start{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px}
-.start-card{width:min(560px,100%);background:rgba(255,255,255,.92);border-radius:30px;padding:28px;box-shadow:0 22px 60px rgba(51,65,85,.16)}
+.start-card{
+  width:min(560px,100%);
+  background:rgba(255,255,255,.92);
+  border-radius:30px;
+  padding:28px;
+  box-shadow:0 22px 60px rgba(51,65,85,.16)
+}
 .logo{text-align:center;margin-bottom:26px}
 .logo h1{margin:0;font-size:52px;letter-spacing:-2px;color:#506276;font-weight:950}
 .logo p{margin:8px 0 0;color:#74859a;font-weight:700}
+
 label{display:block;margin:0 0 8px;color:#607086;font-size:14px;font-weight:850}
 .field{margin-bottom:16px}
-input[type=text],input[type=time],textarea{width:100%;border:1px solid #cbd5e1;border-radius:17px;background:#fff;padding:14px 15px;outline:none;color:#253041;font-size:16px}
+input[type=text],input[type=time],textarea{
+  width:100%;
+  border:1px solid #cbd5e1;
+  border-radius:17px;
+  background:#fff;
+  padding:14px 15px;
+  outline:none;
+  color:#253041;
+  font-size:16px
+}
 input[type=text]{font-size:21px;font-weight:850}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .mode{display:flex;gap:8px;margin-bottom:18px}
-.mode button{flex:1;border:0;border-radius:999px;padding:11px;background:#e2e8f0;color:#607086;font-weight:900}
+.mode button{
+  flex:1;
+  border:0;
+  border-radius:999px;
+  padding:11px;
+  background:#e2e8f0;
+  color:#607086;
+  font-weight:900
+}
 .mode button.on{background:#506276;color:#fff}
-.main-btn{width:100%;border:0;border-radius:20px;padding:16px;background:#506276;color:white;font-size:18px;font-weight:950;box-shadow:0 14px 28px rgba(80,98,118,.25)}
+.main-btn{
+  width:100%;
+  border:0;
+  border-radius:20px;
+  padding:16px;
+  background:#506276;
+  color:white;
+  font-size:18px;
+  font-weight:950;
+  box-shadow:0 14px 28px rgba(80,98,118,.25)
+}
+
 .app{min-height:100vh;padding:10px}
-.top{background:#506276;border-radius:22px;padding:15px;color:white;margin-bottom:10px;display:grid;grid-template-columns:1fr;gap:10px}
+.top{
+  background:#506276;
+  border-radius:22px;
+  padding:15px;
+  color:white;
+  margin-bottom:10px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px
+}
 .brand{text-align:center}
 .brand strong{display:block;font-size:32px;letter-spacing:-1px}
 .brand span{font-size:12px;color:#dbe4ea}
-.title-input{border:1px solid rgba(255,255,255,.28)!important;background:rgba(255,255,255,.13)!important;color:white!important;font-weight:850}
+.title-input{
+  border:1px solid rgba(255,255,255,.28)!important;
+  background:rgba(255,255,255,.13)!important;
+  color:white!important;
+  font-weight:850
+}
 .actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.actions button{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:white;border-radius:14px;padding:11px 5px;font-weight:900;font-size:13px}
+.actions button{
+  border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.12);
+  color:white;
+  border-radius:14px;
+  padding:11px 5px;
+  font-weight:900;
+  font-size:13px
+}
+
 .layout{display:grid;grid-template-columns:1fr 340px;gap:10px}
-.card{background:rgba(255,255,255,.92);border-radius:22px;padding:12px;box-shadow:0 14px 35px rgba(51,65,85,.1)}
+.card{
+  background:rgba(255,255,255,.92);
+  border-radius:22px;
+  padding:12px;
+  box-shadow:0 14px 35px rgba(51,65,85,.1)
+}
 .guide{color:#607086;font-size:13px;font-weight:800;margin-bottom:10px;line-height:1.5}
-.table-wrap{overflow:auto;-webkit-overflow-scrolling:touch;border:1px solid #d7dee8;border-radius:18px;background:#fff}
-table{width:100%;min-width:720px;border-collapse:collapse}
-th{background:#dce5ec;color:#334155;border:1px solid #cbd5e1;padding:12px 8px;font-size:14px;position:sticky;top:0;z-index:2}
-td{height:78px;border:1px solid #dbe1e8;vertical-align:top;padding:6px;cursor:pointer;background:#fff}
-.time{width:82px;text-align:center;font-weight:900;color:#53657a;background:#f8fafc;position:sticky;left:0;z-index:1}
-th.time{z-index:3;background:#dce5ec}
-.empty{height:60px;display:flex;align-items:center;justify-content:center;color:#cbd5e1;font-size:12px;text-align:center}
-.item{width:100%;border:0;border-radius:13px;padding:7px;margin-bottom:5px;text-align:left;box-shadow:0 2px 8px rgba(15,23,42,.08)}
-.item .meta{font-size:11px;font-weight:800;opacity:.75}
-.item .text{margin-top:3px;font-size:14px;font-weight:900}
+.table-wrap{
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  border:1px solid #d7dee8;
+  border-radius:18px;
+  background:#fff
+}
+table{width:100%;min-width:760px;border-collapse:collapse}
+th{
+  background:#dce5ec;
+  color:#334155;
+  border:1px solid #cbd5e1;
+  padding:12px 8px;
+  font-size:14px;
+  position:sticky;
+  top:0;
+  z-index:4
+}
+td{
+  height:42px;
+  border:1px solid #dbe1e8;
+  vertical-align:top;
+  padding:0;
+  cursor:pointer;
+  background:#fff;
+  position:relative
+}
+.time{
+  width:82px;
+  text-align:center;
+  font-weight:900;
+  color:#53657a;
+  background:#f8fafc;
+  position:sticky;
+  left:0;
+  z-index:3;
+  padding:12px 4px;
+  font-size:13px
+}
+th.time{z-index:5;background:#dce5ec}
+.empty{
+  height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#cbd5e1;
+  font-size:11px;
+  text-align:center
+}
+
+td.covered{
+  border-top-color:transparent;
+  border-bottom-color:transparent;
+  background:transparent;
+  pointer-events:none
+}
+.event-cell{
+  height:100%;
+  min-height:42px;
+  width:100%;
+  border:0;
+  border-radius:0;
+  padding:7px 6px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  color:inherit
+}
+.event-content{
+  width:100%;
+  max-width:100%;
+  line-height:1.28;
+  font-weight:850;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  word-break:keep-all;
+  text-align:center
+}
+.event-main{
+  font-size:clamp(11px,1.25vw,15px);
+  font-weight:950;
+  margin-bottom:3px
+}
+.event-time{
+  font-size:clamp(10px,1.05vw,13px);
+  font-weight:800;
+  opacity:.95;
+  margin-top:2px
+}
+.event-note{
+  font-size:clamp(10px,1vw,13px);
+  font-weight:750;
+  margin-top:5px;
+  line-height:1.35
+}
+
 .side-title{font-size:19px;font-weight:950;margin-bottom:4px}
 .hint{color:#94a3b8;font-size:13px;margin-bottom:14px}
 .days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-.day,.type{border:0;border-radius:13px;padding:10px 0;font-weight:900;background:#edf2f7;color:#607086}
+.day,.type{
+  border:0;
+  border-radius:13px;
+  padding:10px 0;
+  font-weight:900;
+  background:#edf2f7;
+  color:#607086
+}
 .day.on,.type.on{background:#506276;color:white}
-.types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.types{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-textarea{height:86px;resize:none}
+textarea{height:86px;resize:vertical}
 .colorbox{background:#f8fafc;border-radius:16px;padding:10px}
 input[type=color]{width:100%;height:36px;border:0;background:transparent}
-.preview{border-radius:18px;padding:13px;margin-bottom:13px;box-shadow:0 2px 8px rgba(15,23,42,.08)}
+.preview{
+  border-radius:18px;
+  padding:13px;
+  margin-bottom:13px;
+  box-shadow:0 2px 8px rgba(15,23,42,.08);
+  text-align:center
+}
 .btns{display:flex;gap:8px}
 .save{flex:1;border:0;border-radius:16px;background:#506276;color:white;padding:13px;font-weight:950}
 .delete{border:0;border-radius:16px;background:#e2e8f0;color:#506276;padding:13px;font-weight:950}
@@ -62,8 +234,20 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
 .list button{width:100%;border:1px solid transparent;border-radius:14px;background:white;padding:10px;margin-bottom:8px;text-align:left}
 .copy{margin-top:13px;text-align:center;color:#9aa8b8;font-size:12px}
 .copy span{background:rgba(255,255,255,.75);border-radius:999px;padding:5px 12px}
-@media(max-width:900px){.layout{grid-template-columns:1fr}.panel{order:-1}}
-@media(max-width:620px){.start-card{padding:24px 20px}.logo h1{font-size:48px}.grid2,.row2{grid-template-columns:1fr}.app{padding:8px}.card{border-radius:20px}.days{grid-template-columns:repeat(7,minmax(34px,1fr))}}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .panel{order:-1}
+}
+@media(max-width:620px){
+  .start-card{padding:24px 20px}
+  .logo h1{font-size:48px}
+  .grid2,.row2{grid-template-columns:1fr}
+  .app{padding:8px}
+  .card{border-radius:20px}
+  .days{grid-template-columns:repeat(7,minmax(34px,1fr))}
+  table{min-width:720px}
+}
 </style>
 </head>
 <body>
@@ -95,19 +279,20 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
 
   <div class="layout">
     <div class="card">
-      <div class="guide">시간 칸을 클릭하면 일정을 입력할 수 있습니다. 휴대폰에서는 표를 좌우로 밀어서 확인하세요.</div>
+      <div class="guide">시간 칸을 클릭하면 일정을 입력할 수 있습니다. 여러 시간에 걸친 일정은 하나의 큰 칸으로 표시됩니다.</div>
       <div class="table-wrap"><table id="table"></table></div>
       <div class="copy"><span>© 심해수학 · D.Flow Scheduler</span></div>
     </div>
 
     <aside class="card panel">
       <div class="side-title">일정 입력</div>
-      <div class="hint">표의 시간을 클릭하면 요일과 시간이 자동으로 들어갑니다.</div>
+      <div class="hint">구분은 선택하지 않아도 됩니다. 선택하면 내용 앞에 함께 표시됩니다.</div>
       <div class="field"><label>요일 중복 선택</label><div class="days" id="days"></div></div>
       <div class="field row2"><div><label>시작 시간</label><input id="startTime" type="time"></div><div><label>마치는 시간</label><input id="endTime" type="time"></div></div>
       <div class="field"><label>구분</label><div class="types" id="types"></div></div>
-      <div class="field"><label>내용 작성</label><textarea id="content" placeholder="예: 수학 보충, 영어학원, 과외 숙제 점검"></textarea></div>
-      <div class="field row2"><div class="colorbox"><label>셀 컬러</label><input id="cellColor" type="color" value="#dbeafe"></div><div class="colorbox"><label>글씨 컬러</label><input id="textColor" type="color" value="#1e3a8a"></div></div>
+      <div class="field"><label>내용 작성</label><textarea id="content" placeholder="예: 수학, 체육, 코딩"></textarea></div>
+      <div class="field"><label>시간 밑 보충 설명</label><textarea id="note" placeholder="예: 문제 풀이, 독해 연습, 준비물 등"></textarea></div>
+      <div class="field row2"><div class="colorbox"><label>셀 컬러</label><input id="cellColor" type="color" value="#fff4cc"></div><div class="colorbox"><label>글씨 컬러</label><input id="textColor" type="color" value="#111827"></div></div>
       <div id="preview" class="preview"></div>
       <div class="btns"><button id="saveBtn" class="save" type="button">저장</button><button id="deleteBtn" class="delete" type="button">삭제</button></div>
       <div class="list"><b style="font-size:14px">등록 목록</b><div id="list" style="margin-top:10px"></div></div>
@@ -118,12 +303,12 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
 <script>
 (function(){
   var DAYS=["월","화","수","목","금","토","일"];
-  var TYPES=["방과후","학원","과외"];
-  var KEY="dflow_stable_mobile_v3";
+  var TYPES=["학교","방과후","학원","과외"];
+  var KEY="dflow_merged_cell_v4";
   var selectedId=null;
   var timeMode=12;
   var state={title:"나의 주간 시간표",startDay:"08:00",endDay:"22:00",made:false,items:[]};
-  var form={days:["월"],startTime:"08:00",endTime:"09:00",type:"학원",content:"",cellColor:"#dbeafe",textColor:"#1e3a8a"};
+  var form={days:["월"],startTime:"08:00",endTime:"09:00",type:"",content:"",note:"",cellColor:"#fff4cc",textColor:"#111827"};
 
   function el(id){return document.getElementById(id);}
   function toMin(t){var a=t.split(":");return Number(a[0])*60+Number(a[1]);}
@@ -148,6 +333,17 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
     var s=h<12?"AM":"PM"; var hh=h%12; if(hh===0) hh=12;
     return String(hh).padStart(2,"0")+":"+m+" "+s;
   }
+  function displayRange(a,b){
+    return a+"~"+b;
+  }
+  function mainText(item){
+    var first = "";
+    if(item.type && item.content) first = item.type + " " + item.content;
+    else if(item.type) first = item.type;
+    else if(item.content) first = item.content;
+    return first;
+  }
+  function safeText(v){return (v||"").replace(/[<>&]/g,function(ch){return {"<":"&lt;",">":"&gt;","&":"&amp;"}[ch];});}
 
   function setMode(mode){
     timeMode=mode;
@@ -208,7 +404,7 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
       b.className="type"+(form.type===type?" on":"");
       b.textContent=type;
       b.addEventListener("click",function(){
-        form.type=type;
+        form.type = (form.type===type) ? "" : type;
         renderTypes(); updatePreview();
       });
       el("types").appendChild(b);
@@ -219,6 +415,7 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
     form.startTime=el("startTime").value;
     form.endTime=el("endTime").value;
     form.content=el("content").value;
+    form.note=el("note").value;
     form.cellColor=el("cellColor").value;
     form.textColor=el("textColor").value;
     updatePreview();
@@ -227,16 +424,36 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
   function fillForm(){
     el("startTime").value=form.startTime;
     el("endTime").value=form.endTime;
-    el("content").value=form.content;
+    el("content").value=form.content || "";
+    el("note").value=form.note || "";
     el("cellColor").value=form.cellColor;
     el("textColor").value=form.textColor;
     renderDays(); renderTypes(); updatePreview();
   }
 
   function updatePreview(){
+    var temp={type:form.type,content:form.content,note:form.note,startTime:form.startTime,endTime:form.endTime};
+    var mt=mainText(temp);
     el("preview").style.background=form.cellColor;
     el("preview").style.color=form.textColor;
-    el("preview").innerHTML='<div style="font-size:12px;font-weight:800;opacity:.78">'+form.days.join(", ")+" · "+form.startTime+"~"+form.endTime+" · "+form.type+'</div><div style="margin-top:5px;font-weight:900">'+(form.content||"미리보기 내용")+"</div>";
+    el("preview").innerHTML=
+      '<div class="event-content">'+
+      (mt?'<div class="event-main">'+safeText(mt)+'</div>':'')+
+      '<div class="event-time">'+safeText(displayRange(form.startTime,form.endTime))+'</div>'+
+      (form.note?'<div class="event-note">'+safeText(form.note)+'</div>':'')+
+      '</div>';
+  }
+
+  function getStartingItem(day,m){
+    return state.items.find(function(it){
+      return it.days.indexOf(day)>=0 && toMin(it.startTime)===m;
+    });
+  }
+  function isCovered(day,m){
+    return state.items.some(function(it){
+      var s=toMin(it.startTime), e=toMin(it.endTime);
+      return it.days.indexOf(day)>=0 && s<m && m<e;
+    });
   }
 
   function renderTable(){
@@ -248,30 +465,43 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
     thead.appendChild(hr); table.appendChild(thead);
 
     var tbody=document.createElement("tbody");
-    var start=Math.floor(toMin(state.startDay)/60)*60;
-    var end=Math.ceil(toMin(state.endDay)/60)*60;
+    var start=Math.floor(toMin(state.startDay)/30)*30;
+    var end=Math.ceil(toMin(state.endDay)/30)*30;
 
-    for(var m=start;m<end;m+=60){
+    for(var m=start;m<end;m+=30){
       var time=toTime(m);
       var tr=document.createElement("tr");
       tr.innerHTML='<td class="time">'+displayTime(time)+"</td>";
+
       DAYS.forEach(function(day){
         var td=document.createElement("td");
-        td.addEventListener("click",function(){openNew(day,time);});
-        var found=state.items.filter(function(it){return it.days.indexOf(day)>=0 && toMin(it.startTime)<=m && m<toMin(it.endTime);});
-        if(found.length===0){
-          td.innerHTML='<div class="empty">클릭하여 입력</div>';
+
+        var item=getStartingItem(day,m);
+        if(item){
+          var span=Math.max(1, Math.ceil((toMin(item.endTime)-toMin(item.startTime))/30));
+          td.rowSpan=span;
+          td.style.background=item.cellColor;
+          td.style.color=item.textColor;
+          td.onclick=function(){openEdit(item);};
+
+          var btn=document.createElement("button");
+          btn.type="button";
+          btn.className="event-cell";
+          btn.style.background=item.cellColor;
+          btn.style.color=item.textColor;
+          var mt=mainText(item);
+          btn.innerHTML='<div class="event-content">'+
+            (mt?'<div class="event-main">'+safeText(mt)+'</div>':'')+
+            '<div class="event-time">'+safeText(displayRange(item.startTime,item.endTime))+'</div>'+
+            (item.note?'<div class="event-note">'+safeText(item.note)+'</div>':'')+
+            '</div>';
+          btn.onclick=function(e){e.stopPropagation();openEdit(item);};
+          td.appendChild(btn);
+        } else if(isCovered(day,m)){
+          return;
         } else {
-          found.forEach(function(it){
-            var btn=document.createElement("button");
-            btn.type="button";
-            btn.className="item";
-            btn.style.background=it.cellColor;
-            btn.style.color=it.textColor;
-            btn.innerHTML='<div class="meta">'+it.startTime+"~"+it.endTime+" · "+it.type+'</div><div class="text">'+it.content+"</div>";
-            btn.addEventListener("click",function(e){e.stopPropagation();openEdit(it);});
-            td.appendChild(btn);
-          });
+          td.onclick=function(){openNew(day,time);};
+          td.innerHTML='<div class="empty">클릭하여 입력</div>';
         }
         tr.appendChild(td);
       });
@@ -283,7 +513,7 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
 
   function openNew(day,time){
     selectedId=null;
-    form={days:[day],startTime:time,endTime:toTime(Math.min(toMin(time)+60,toMin(state.endDay))),type:"학원",content:"",cellColor:"#dbeafe",textColor:"#1e3a8a"};
+    form={days:[day],startTime:time,endTime:toTime(Math.min(toMin(time)+30,toMin(state.endDay))),type:"",content:"",note:"",cellColor:"#fff4cc",textColor:"#111827"};
     fillForm();
     if(window.innerWidth<=900) document.querySelector(".panel").scrollIntoView({behavior:"smooth",block:"start"});
   }
@@ -291,15 +521,29 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
   function openEdit(item){
     selectedId=item.id;
     form=JSON.parse(JSON.stringify(item));
+    if(form.note===undefined) form.note="";
     fillForm();
     if(window.innerWidth<=900) document.querySelector(".panel").scrollIntoView({behavior:"smooth",block:"start"});
   }
 
   function saveItem(){
     syncForm();
-    if(!form.content.trim()){alert("내용을 입력해 주세요.");return;}
+    if(!form.type && !form.content.trim() && !form.note.trim()){
+      alert("구분, 내용, 보충 설명 중 하나 이상 입력해 주세요.");
+      return;
+    }
     if(toMin(form.endTime)<=toMin(form.startTime)){alert("마치는 시간은 시작 시간보다 늦어야 합니다.");return;}
-    var item={id:selectedId||uid(),days:form.days.slice(),startTime:form.startTime,endTime:form.endTime,type:form.type,content:form.content.trim(),cellColor:form.cellColor,textColor:form.textColor};
+    var item={
+      id:selectedId||uid(),
+      days:form.days.slice(),
+      startTime:form.startTime,
+      endTime:form.endTime,
+      type:form.type,
+      content:form.content.trim(),
+      note:form.note.trim(),
+      cellColor:form.cellColor,
+      textColor:form.textColor
+    };
     if(selectedId){
       state.items=state.items.map(function(x){return x.id===selectedId?item:x;});
     } else {
@@ -315,7 +559,9 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
     state.items=state.items.filter(function(x){return x.id!==selectedId;});
     selectedId=null;
     form.content="";
+    form.note="";
     el("content").value="";
+    el("note").value="";
     saveLocal();
     renderTable();
     updatePreview();
@@ -331,7 +577,8 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
     state.items.slice().sort(function(a,b){return toMin(a.startTime)-toMin(b.startTime);}).forEach(function(it){
       var b=document.createElement("button");
       b.type="button";
-      b.innerHTML="<b>"+it.content+'</b><br><span style="font-size:12px;color:#94a3b8">'+it.days.join(", ")+" · "+it.startTime+"~"+it.endTime+" · "+it.type+"</span>";
+      var mt=mainText(it) || "(내용 없음)";
+      b.innerHTML="<b>"+safeText(mt)+'</b><br><span style="font-size:12px;color:#94a3b8">'+it.days.join(", ")+" · "+it.startTime+"~"+it.endTime+"</span>";
       b.addEventListener("click",function(){openEdit(it);});
       list.appendChild(b);
     });
@@ -340,12 +587,12 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
   function downloadSchedule(){
     state.title=el("titleView").value.trim() || "나의 주간 시간표";
     saveLocal();
-    var data={app:"D.Flow Scheduler",version:"1.0",exportedAt:new Date().toISOString(),schedule:state};
+    var data={app:"D.Flow Scheduler",version:"1.1",exportedAt:new Date().toISOString(),schedule:state};
     var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
     var url=URL.createObjectURL(blob);
     var a=document.createElement("a");
     a.href=url;
-    a.download=(state.title.replace(/[\\/:*?"<>|]/g,"_").slice(0,30)||"dflow")+"_D.Flow_시간표.json";
+    a.download=(state.title.replace(/[\\/:*?\"<>|]/g,"_").slice(0,30)||"dflow")+"_D.Flow_시간표.json";
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
 
@@ -358,6 +605,7 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
         var loaded=parsed.schedule||parsed;
         if(!loaded.startDay||!loaded.endDay||!Array.isArray(loaded.items)){alert("D.Flow 시간표 파일 형식이 아닙니다.");return;}
         state={title:loaded.title||"나의 주간 시간표",startDay:loaded.startDay,endDay:loaded.endDay,made:true,items:loaded.items||[]};
+        state.items=state.items.map(function(it){ if(it.note===undefined) it.note=""; return it; });
         selectedId=null; saveLocal();
         el("titleView").value=state.title;
         renderTable(); showApp();
@@ -378,7 +626,7 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
     el("saveBtn").addEventListener("click",saveItem);
     el("deleteBtn").addEventListener("click",deleteItem);
     el("titleView").addEventListener("input",function(){state.title=el("titleView").value;saveLocal();});
-    ["startTime","endTime","content","cellColor","textColor"].forEach(function(id){el(id).addEventListener("input",syncForm);});
+    ["startTime","endTime","content","note","cellColor","textColor"].forEach(function(id){el(id).addEventListener("input",syncForm);});
   }
 
   loadLocal();
