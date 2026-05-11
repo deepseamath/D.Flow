@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D.Flow</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;background:linear-gradient(135deg,#d9e2e9,#eef3f6,#f8fafc);color:#263445}
+button,input,textarea{font-family:inherit}
+.hidden{display:none!important}
+.start{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px}
+.start-card{width:min(560px,100%);background:rgba(255,255,255,.92);border-radius:30px;padding:28px;box-shadow:0 22px 60px rgba(51,65,85,.16)}
+.logo{text-align:center;margin-bottom:26px}
+.logo h1{margin:0;font-size:52px;letter-spacing:-2px;color:#506276;font-weight:950}
+.logo p{margin:8px 0 0;color:#74859a;font-weight:700}
+label{display:block;margin:0 0 8px;color:#607086;font-size:14px;font-weight:850}
+.field{margin-bottom:16px}
+input[type=text],input[type=time],textarea{width:100%;border:1px solid #cbd5e1;border-radius:17px;background:#fff;padding:14px 15px;outline:none;color:#253041;font-size:16px}
+input[type=text]{font-size:21px;font-weight:850}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mode{display:flex;gap:8px;margin-bottom:18px}
+.mode button{flex:1;border:0;border-radius:999px;padding:11px;background:#e2e8f0;color:#607086;font-weight:900}
+.mode button.on{background:#506276;color:#fff}
+.main-btn{width:100%;border:0;border-radius:20px;padding:16px;background:#506276;color:white;font-size:18px;font-weight:950;box-shadow:0 14px 28px rgba(80,98,118,.25)}
+.app{min-height:100vh;padding:10px}
+.top{background:#506276;border-radius:22px;padding:15px;color:white;margin-bottom:10px;display:grid;grid-template-columns:1fr;gap:10px}
+.brand{text-align:center}
+.brand strong{display:block;font-size:32px;letter-spacing:-1px}
+.brand span{font-size:12px;color:#dbe4ea}
+.title-input{border:1px solid rgba(255,255,255,.28)!important;background:rgba(255,255,255,.13)!important;color:white!important;font-weight:850}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.actions button{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:white;border-radius:14px;padding:11px 5px;font-weight:900;font-size:13px}
+.layout{display:grid;grid-template-columns:1fr 340px;gap:10px}
+.card{background:rgba(255,255,255,.92);border-radius:22px;padding:12px;box-shadow:0 14px 35px rgba(51,65,85,.1)}
+.guide{color:#607086;font-size:13px;font-weight:800;margin-bottom:10px;line-height:1.5}
+.table-wrap{overflow:auto;-webkit-overflow-scrolling:touch;border:1px solid #d7dee8;border-radius:18px;background:#fff}
+table{width:100%;min-width:720px;border-collapse:collapse}
+th{background:#dce5ec;color:#334155;border:1px solid #cbd5e1;padding:12px 8px;font-size:14px;position:sticky;top:0;z-index:2}
+td{height:78px;border:1px solid #dbe1e8;vertical-align:top;padding:6px;cursor:pointer;background:#fff}
+.time{width:82px;text-align:center;font-weight:900;color:#53657a;background:#f8fafc;position:sticky;left:0;z-index:1}
+th.time{z-index:3;background:#dce5ec}
+.empty{height:60px;display:flex;align-items:center;justify-content:center;color:#cbd5e1;font-size:12px;text-align:center}
+.item{width:100%;border:0;border-radius:13px;padding:7px;margin-bottom:5px;text-align:left;box-shadow:0 2px 8px rgba(15,23,42,.08)}
+.item .meta{font-size:11px;font-weight:800;opacity:.75}
+.item .text{margin-top:3px;font-size:14px;font-weight:900}
+.side-title{font-size:19px;font-weight:950;margin-bottom:4px}
+.hint{color:#94a3b8;font-size:13px;margin-bottom:14px}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.day,.type{border:0;border-radius:13px;padding:10px 0;font-weight:900;background:#edf2f7;color:#607086}
+.day.on,.type.on{background:#506276;color:white}
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+textarea{height:86px;resize:none}
+.colorbox{background:#f8fafc;border-radius:16px;padding:10px}
+input[type=color]{width:100%;height:36px;border:0;background:transparent}
+.preview{border-radius:18px;padding:13px;margin-bottom:13px;box-shadow:0 2px 8px rgba(15,23,42,.08)}
+.btns{display:flex;gap:8px}
+.save{flex:1;border:0;border-radius:16px;background:#506276;color:white;padding:13px;font-weight:950}
+.delete{border:0;border-radius:16px;background:#e2e8f0;color:#506276;padding:13px;font-weight:950}
+.list{margin-top:16px;background:#f8fafc;border-radius:18px;padding:12px;max-height:190px;overflow:auto}
+.list button{width:100%;border:1px solid transparent;border-radius:14px;background:white;padding:10px;margin-bottom:8px;text-align:left}
+.copy{margin-top:13px;text-align:center;color:#9aa8b8;font-size:12px}
+.copy span{background:rgba(255,255,255,.75);border-radius:999px;padding:5px 12px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.panel{order:-1}}
+@media(max-width:620px){.start-card{padding:24px 20px}.logo h1{font-size:48px}.grid2,.row2{grid-template-columns:1fr}.app{padding:8px}.card{border-radius:20px}.days{grid-template-columns:repeat(7,minmax(34px,1fr))}}
+</style>
+</head>
+<body>
+
+<section id="start" class="start">
+  <div class="start-card">
+    <div class="logo"><h1>D.Flow</h1><p>Design your daily flow.</p></div>
+    <div class="field"><label>시간표 제목</label><input id="titleFirst" type="text" value="나의 주간 시간표"></div>
+    <div class="mode"><button id="btn12" class="on" type="button">12시 기준</button><button id="btn24" type="button">24시 기준</button></div>
+    <div class="grid2">
+      <div class="field"><label>나의 하루 시작 시간</label><input id="dayStart" type="time" value="08:00"></div>
+      <div class="field"><label>나의 하루 마지막 시간</label><input id="dayEnd" type="time" value="22:00"></div>
+    </div>
+    <button id="makeBtn" class="main-btn" type="button">표 만들기</button>
+  </div>
+</section>
+
+<section id="app" class="app hidden">
+  <div class="top">
+    <div class="brand"><strong>D.Flow</strong><span>Design your daily flow.</span></div>
+    <input id="titleView" class="title-input" type="text">
+    <div class="actions">
+      <button id="downloadBtn" type="button">다운로드</button>
+      <button id="loadBtn" type="button">불러오기</button>
+      <button id="settingBtn" type="button">시간 설정</button>
+    </div>
+    <input id="fileInput" type="file" accept=".json" class="hidden">
+  </div>
+
+  <div class="layout">
+    <div class="card">
+      <div class="guide">시간 칸을 클릭하면 일정을 입력할 수 있습니다. 휴대폰에서는 표를 좌우로 밀어서 확인하세요.</div>
+      <div class="table-wrap"><table id="table"></table></div>
+      <div class="copy"><span>© 심해수학 · D.Flow Scheduler</span></div>
+    </div>
+
+    <aside class="card panel">
+      <div class="side-title">일정 입력</div>
+      <div class="hint">표의 시간을 클릭하면 요일과 시간이 자동으로 들어갑니다.</div>
+      <div class="field"><label>요일 중복 선택</label><div class="days" id="days"></div></div>
+      <div class="field row2"><div><label>시작 시간</label><input id="startTime" type="time"></div><div><label>마치는 시간</label><input id="endTime" type="time"></div></div>
+      <div class="field"><label>구분</label><div class="types" id="types"></div></div>
+      <div class="field"><label>내용 작성</label><textarea id="content" placeholder="예: 수학 보충, 영어학원, 과외 숙제 점검"></textarea></div>
+      <div class="field row2"><div class="colorbox"><label>셀 컬러</label><input id="cellColor" type="color" value="#dbeafe"></div><div class="colorbox"><label>글씨 컬러</label><input id="textColor" type="color" value="#1e3a8a"></div></div>
+      <div id="preview" class="preview"></div>
+      <div class="btns"><button id="saveBtn" class="save" type="button">저장</button><button id="deleteBtn" class="delete" type="button">삭제</button></div>
+      <div class="list"><b style="font-size:14px">등록 목록</b><div id="list" style="margin-top:10px"></div></div>
+    </aside>
+  </div>
+</section>
+
+<script>
+(function(){
+  var DAYS=["월","화","수","목","금","토","일"];
+  var TYPES=["방과후","학원","과외"];
+  var KEY="dflow_stable_mobile_v3";
+  var selectedId=null;
+  var timeMode=12;
+  var state={title:"나의 주간 시간표",startDay:"08:00",endDay:"22:00",made:false,items:[]};
+  var form={days:["월"],startTime:"08:00",endTime:"09:00",type:"학원",content:"",cellColor:"#dbeafe",textColor:"#1e3a8a"};
+
+  function el(id){return document.getElementById(id);}
+  function toMin(t){var a=t.split(":");return Number(a[0])*60+Number(a[1]);}
+  function toTime(min){return String(Math.floor(min/60)).padStart(2,"0")+":"+String(min%60).padStart(2,"0");}
+  function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+  function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+  function loadLocal(){try{var raw=localStorage.getItem(KEY);if(raw){state=JSON.parse(raw);}}catch(e){}}
+
+  function showApp(){
+    el("start").className="start hidden";
+    el("app").className="app";
+    window.scrollTo(0,0);
+  }
+  function showStart(){
+    el("app").className="app hidden";
+    el("start").className="start";
+    window.scrollTo(0,0);
+  }
+  function displayTime(time){
+    var a=time.split(":"); var h=Number(a[0]); var m=a[1];
+    if(timeMode===24) return String(h).padStart(2,"0")+":"+m;
+    var s=h<12?"AM":"PM"; var hh=h%12; if(hh===0) hh=12;
+    return String(hh).padStart(2,"0")+":"+m+" "+s;
+  }
+
+  function setMode(mode){
+    timeMode=mode;
+    el("btn12").className=mode===12?"on":"";
+    el("btn24").className=mode===24?"on":"";
+    if(state.made) renderTable();
+  }
+
+  function makeTable(){
+    var title=el("titleFirst").value.trim() || "나의 주간 시간표";
+    var start=el("dayStart").value;
+    var end=el("dayEnd").value;
+    if(toMin(end)<=toMin(start)){alert("마지막 시간은 시작 시간보다 늦어야 합니다.");return;}
+
+    state.title=title;
+    state.startDay=start;
+    state.endDay=end;
+    state.made=true;
+    saveLocal();
+
+    el("titleView").value=state.title;
+    form.startTime=start;
+    form.endTime=toTime(Math.min(toMin(start)+60,toMin(end)));
+    fillForm();
+    renderTable();
+    showApp();
+  }
+
+  function backToStart(){
+    el("titleFirst").value=state.title;
+    el("dayStart").value=state.startDay;
+    el("dayEnd").value=state.endDay;
+    showStart();
+  }
+
+  function renderDays(){
+    el("days").innerHTML="";
+    DAYS.forEach(function(day){
+      var b=document.createElement("button");
+      b.type="button";
+      b.className="day"+(form.days.indexOf(day)>=0?" on":"");
+      b.textContent=day;
+      b.addEventListener("click",function(){
+        var idx=form.days.indexOf(day);
+        if(idx>=0) form.days.splice(idx,1); else form.days.push(day);
+        if(form.days.length===0) form.days=[day];
+        renderDays(); updatePreview();
+      });
+      el("days").appendChild(b);
+    });
+  }
+
+  function renderTypes(){
+    el("types").innerHTML="";
+    TYPES.forEach(function(type){
+      var b=document.createElement("button");
+      b.type="button";
+      b.className="type"+(form.type===type?" on":"");
+      b.textContent=type;
+      b.addEventListener("click",function(){
+        form.type=type;
+        renderTypes(); updatePreview();
+      });
+      el("types").appendChild(b);
+    });
+  }
+
+  function syncForm(){
+    form.startTime=el("startTime").value;
+    form.endTime=el("endTime").value;
+    form.content=el("content").value;
+    form.cellColor=el("cellColor").value;
+    form.textColor=el("textColor").value;
+    updatePreview();
+  }
+
+  function fillForm(){
+    el("startTime").value=form.startTime;
+    el("endTime").value=form.endTime;
+    el("content").value=form.content;
+    el("cellColor").value=form.cellColor;
+    el("textColor").value=form.textColor;
+    renderDays(); renderTypes(); updatePreview();
+  }
+
+  function updatePreview(){
+    el("preview").style.background=form.cellColor;
+    el("preview").style.color=form.textColor;
+    el("preview").innerHTML='<div style="font-size:12px;font-weight:800;opacity:.78">'+form.days.join(", ")+" · "+form.startTime+"~"+form.endTime+" · "+form.type+'</div><div style="margin-top:5px;font-weight:900">'+(form.content||"미리보기 내용")+"</div>";
+  }
+
+  function renderTable(){
+    var table=el("table");
+    table.innerHTML="";
+    var thead=document.createElement("thead");
+    var hr=document.createElement("tr");
+    hr.innerHTML="<th class='time'>시간</th>"+DAYS.map(function(d){return "<th>"+d+"</th>";}).join("");
+    thead.appendChild(hr); table.appendChild(thead);
+
+    var tbody=document.createElement("tbody");
+    var start=Math.floor(toMin(state.startDay)/60)*60;
+    var end=Math.ceil(toMin(state.endDay)/60)*60;
+
+    for(var m=start;m<end;m+=60){
+      var time=toTime(m);
+      var tr=document.createElement("tr");
+      tr.innerHTML='<td class="time">'+displayTime(time)+"</td>";
+      DAYS.forEach(function(day){
+        var td=document.createElement("td");
+        td.addEventListener("click",function(){openNew(day,time);});
+        var found=state.items.filter(function(it){return it.days.indexOf(day)>=0 && toMin(it.startTime)<=m && m<toMin(it.endTime);});
+        if(found.length===0){
+          td.innerHTML='<div class="empty">클릭하여 입력</div>';
+        } else {
+          found.forEach(function(it){
+            var btn=document.createElement("button");
+            btn.type="button";
+            btn.className="item";
+            btn.style.background=it.cellColor;
+            btn.style.color=it.textColor;
+            btn.innerHTML='<div class="meta">'+it.startTime+"~"+it.endTime+" · "+it.type+'</div><div class="text">'+it.content+"</div>";
+            btn.addEventListener("click",function(e){e.stopPropagation();openEdit(it);});
+            td.appendChild(btn);
+          });
+        }
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    renderList();
+  }
+
+  function openNew(day,time){
+    selectedId=null;
+    form={days:[day],startTime:time,endTime:toTime(Math.min(toMin(time)+60,toMin(state.endDay))),type:"학원",content:"",cellColor:"#dbeafe",textColor:"#1e3a8a"};
+    fillForm();
+    if(window.innerWidth<=900) document.querySelector(".panel").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+
+  function openEdit(item){
+    selectedId=item.id;
+    form=JSON.parse(JSON.stringify(item));
+    fillForm();
+    if(window.innerWidth<=900) document.querySelector(".panel").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+
+  function saveItem(){
+    syncForm();
+    if(!form.content.trim()){alert("내용을 입력해 주세요.");return;}
+    if(toMin(form.endTime)<=toMin(form.startTime)){alert("마치는 시간은 시작 시간보다 늦어야 합니다.");return;}
+    var item={id:selectedId||uid(),days:form.days.slice(),startTime:form.startTime,endTime:form.endTime,type:form.type,content:form.content.trim(),cellColor:form.cellColor,textColor:form.textColor};
+    if(selectedId){
+      state.items=state.items.map(function(x){return x.id===selectedId?item:x;});
+    } else {
+      state.items.push(item);
+    }
+    selectedId=item.id;
+    saveLocal();
+    renderTable();
+  }
+
+  function deleteItem(){
+    if(!selectedId) return;
+    state.items=state.items.filter(function(x){return x.id!==selectedId;});
+    selectedId=null;
+    form.content="";
+    el("content").value="";
+    saveLocal();
+    renderTable();
+    updatePreview();
+  }
+
+  function renderList(){
+    var list=el("list");
+    list.innerHTML="";
+    if(state.items.length===0){
+      list.innerHTML='<div style="font-size:13px;color:#94a3b8">아직 입력된 일정이 없습니다.</div>';
+      return;
+    }
+    state.items.slice().sort(function(a,b){return toMin(a.startTime)-toMin(b.startTime);}).forEach(function(it){
+      var b=document.createElement("button");
+      b.type="button";
+      b.innerHTML="<b>"+it.content+'</b><br><span style="font-size:12px;color:#94a3b8">'+it.days.join(", ")+" · "+it.startTime+"~"+it.endTime+" · "+it.type+"</span>";
+      b.addEventListener("click",function(){openEdit(it);});
+      list.appendChild(b);
+    });
+  }
+
+  function downloadSchedule(){
+    state.title=el("titleView").value.trim() || "나의 주간 시간표";
+    saveLocal();
+    var data={app:"D.Flow Scheduler",version:"1.0",exportedAt:new Date().toISOString(),schedule:state};
+    var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement("a");
+    a.href=url;
+    a.download=(state.title.replace(/[\\/:*?"<>|]/g,"_").slice(0,30)||"dflow")+"_D.Flow_시간표.json";
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  }
+
+  function uploadSchedule(file){
+    if(!file) return;
+    var reader=new FileReader();
+    reader.onload=function(e){
+      try{
+        var parsed=JSON.parse(e.target.result);
+        var loaded=parsed.schedule||parsed;
+        if(!loaded.startDay||!loaded.endDay||!Array.isArray(loaded.items)){alert("D.Flow 시간표 파일 형식이 아닙니다.");return;}
+        state={title:loaded.title||"나의 주간 시간표",startDay:loaded.startDay,endDay:loaded.endDay,made:true,items:loaded.items||[]};
+        selectedId=null; saveLocal();
+        el("titleView").value=state.title;
+        renderTable(); showApp();
+        alert("시간표를 불러왔습니다.");
+      }catch(err){alert("파일을 불러오지 못했습니다.");}
+    };
+    reader.readAsText(file);
+  }
+
+  function bind(){
+    el("btn12").addEventListener("click",function(){setMode(12);});
+    el("btn24").addEventListener("click",function(){setMode(24);});
+    el("makeBtn").addEventListener("click",makeTable);
+    el("settingBtn").addEventListener("click",backToStart);
+    el("downloadBtn").addEventListener("click",downloadSchedule);
+    el("loadBtn").addEventListener("click",function(){el("fileInput").click();});
+    el("fileInput").addEventListener("change",function(e){uploadSchedule(e.target.files[0]); e.target.value="";});
+    el("saveBtn").addEventListener("click",saveItem);
+    el("deleteBtn").addEventListener("click",deleteItem);
+    el("titleView").addEventListener("input",function(){state.title=el("titleView").value;saveLocal();});
+    ["startTime","endTime","content","cellColor","textColor"].forEach(function(id){el(id).addEventListener("input",syncForm);});
+  }
+
+  loadLocal();
+  bind();
+  el("titleFirst").value=state.title;
+  el("dayStart").value=state.startDay;
+  el("dayEnd").value=state.endDay;
+  el("titleView").value=state.title;
+  fillForm();
+})();
+</script>
+</body>
+</html>
