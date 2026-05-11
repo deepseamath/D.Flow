@@ -6,6 +6,7 @@
 <title>D.Flow</title>
 <style>
 *{box-sizing:border-box}
+:root{--hour-h:76px;--time-w:78px;--day-w:145px}
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;
@@ -103,98 +104,118 @@ input[type=text]{font-size:21px;font-weight:850}
   box-shadow:0 14px 35px rgba(51,65,85,.1)
 }
 .guide{color:#607086;font-size:13px;font-weight:800;margin-bottom:10px;line-height:1.5}
-.table-wrap{
+
+.timetable-wrap{
   overflow:auto;
   -webkit-overflow-scrolling:touch;
   border:1px solid #d7dee8;
   border-radius:18px;
   background:#fff
 }
-table{width:100%;min-width:760px;border-collapse:collapse}
-th{
+.timetable{
+  min-width:calc(var(--time-w) + var(--day-w) * 7);
+  display:grid;
+  grid-template-columns:var(--time-w) repeat(7,var(--day-w));
+  grid-template-rows:46px auto;
+}
+.corner,.day-head{
   background:#dce5ec;
+  border-right:1px solid #cbd5e1;
+  border-bottom:1px solid #cbd5e1;
+  padding:13px 6px;
+  text-align:center;
+  font-weight:950;
   color:#334155;
-  border:1px solid #cbd5e1;
-  padding:12px 8px;
-  font-size:14px;
   position:sticky;
   top:0;
   z-index:4
 }
-td{
-  height:42px;
-  border:1px solid #dbe1e8;
-  vertical-align:top;
-  padding:0;
-  cursor:pointer;
-  background:#fff;
-  position:relative
+.corner{
+  left:0;
+  z-index:5
 }
-.time{
-  width:82px;
-  text-align:center;
-  font-weight:900;
-  color:#53657a;
-  background:#f8fafc;
+.time-col{
+  grid-column:1;
+  grid-row:2;
   position:sticky;
   left:0;
   z-index:3;
-  padding:12px 4px;
+  background:#f8fafc
+}
+.time-label{
+  height:var(--hour-h);
+  border-right:1px solid #cbd5e1;
+  border-bottom:1px solid #dbe1e8;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding-top:9px;
+  font-weight:900;
+  color:#53657a;
   font-size:13px
 }
-th.time{z-index:5;background:#dce5ec}
-.empty{
-  height:42px;
+.day-col{
+  grid-row:2;
+  position:relative;
+  background:white;
+  border-right:1px solid #dbe1e8
+}
+.hour-bg{
+  height:var(--hour-h);
+  border-bottom:1px solid #dbe1e8;
+  position:relative;
+  cursor:pointer
+}
+.hour-bg:hover{background:#f8fafc}
+.half-guide{
+  position:absolute;
+  left:0;right:0;top:50%;
+  border-top:1px dashed rgba(148,163,184,.22);
+  pointer-events:none
+}
+.empty-hint{
+  position:absolute;
+  inset:0;
   display:flex;
   align-items:center;
   justify-content:center;
-  color:#cbd5e1;
+  color:#d1d9e2;
   font-size:11px;
-  text-align:center
-}
-
-td.covered{
-  border-top-color:transparent;
-  border-bottom-color:transparent;
-  background:transparent;
   pointer-events:none
 }
-.event-cell{
-  height:100%;
-  min-height:42px;
-  width:100%;
+.event-block{
+  position:absolute;
+  left:4px;
+  right:4px;
   border:0;
   border-radius:0;
-  padding:7px 6px;
-  text-align:center;
-  cursor:pointer;
+  padding:7px 5px;
   box-shadow:none;
+  cursor:pointer;
   display:flex;
   align-items:center;
   justify-content:center;
   overflow:hidden;
-  color:inherit
+  text-align:center;
+  z-index:2;
+  min-height:28px
 }
 .event-content{
   width:100%;
-  max-width:100%;
   line-height:1.28;
-  font-weight:850;
   white-space:pre-wrap;
   overflow-wrap:anywhere;
-  word-break:keep-all;
-  text-align:center
+  word-break:keep-all
 }
 .event-main{
-  font-size:clamp(11px,1.25vw,15px);
+  font-size:clamp(11px,1.2vw,15px);
   font-weight:950;
   margin-bottom:3px
 }
 .event-time{
   font-size:clamp(10px,1.05vw,13px);
   font-weight:800;
-  opacity:.95;
-  margin-top:2px
+  opacity:.95
 }
 .event-note{
   font-size:clamp(10px,1vw,13px);
@@ -240,13 +261,13 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
   .panel{order:-1}
 }
 @media(max-width:620px){
+  :root{--hour-h:70px;--time-w:72px;--day-w:132px}
   .start-card{padding:24px 20px}
   .logo h1{font-size:48px}
   .grid2,.row2{grid-template-columns:1fr}
   .app{padding:8px}
   .card{border-radius:20px}
   .days{grid-template-columns:repeat(7,minmax(34px,1fr))}
-  table{min-width:720px}
 }
 </style>
 </head>
@@ -279,8 +300,8 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
 
   <div class="layout">
     <div class="card">
-      <div class="guide">시간 칸을 클릭하면 일정을 입력할 수 있습니다. 여러 시간에 걸친 일정은 하나의 큰 칸으로 표시됩니다.</div>
-      <div class="table-wrap"><table id="table"></table></div>
+      <div class="guide">세로 시간은 1시간 단위로 표시됩니다. 30분 일정은 시간 사이 중간 위치에 맞춰 배치됩니다.</div>
+      <div class="timetable-wrap"><div id="timetable" class="timetable"></div></div>
       <div class="copy"><span>© 심해수학 · D.Flow Scheduler</span></div>
     </div>
 
@@ -305,6 +326,7 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
   var DAYS=["월","화","수","목","금","토","일"];
   var TYPES=["학교","방과후","학원","과외"];
   var KEY="dflow_merged_cell_v4";
+  var BACKUP_KEYS=["dflow_merged_cell_v4","dflow_stable_mobile_v3","dflow_fixed_preview_v2","dflow_preview_responsive_v1"];
   var selectedId=null;
   var timeMode=12;
   var state={title:"나의 주간 시간표",startDay:"08:00",endDay:"22:00",made:false,items:[]};
@@ -315,35 +337,41 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
   function toTime(min){return String(Math.floor(min/60)).padStart(2,"0")+":"+String(min%60).padStart(2,"0");}
   function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
   function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
-  function loadLocal(){try{var raw=localStorage.getItem(KEY);if(raw){state=JSON.parse(raw);}}catch(e){}}
+  function loadLocal(){
+    try{
+      for(var i=0;i<BACKUP_KEYS.length;i++){
+        var raw=localStorage.getItem(BACKUP_KEYS[i]);
+        if(raw){state=JSON.parse(raw);break;}
+      }
+      if(!state.items) state.items=[];
+      state.items=state.items.map(function(it){
+        if(it.note===undefined) it.note="";
+        if(it.type===undefined) it.type="";
+        return it;
+      });
+    }catch(e){}
+  }
 
-  function showApp(){
-    el("start").className="start hidden";
-    el("app").className="app";
-    window.scrollTo(0,0);
-  }
-  function showStart(){
-    el("app").className="app hidden";
-    el("start").className="start";
-    window.scrollTo(0,0);
-  }
+  function showApp(){el("start").className="start hidden";el("app").className="app";window.scrollTo(0,0);}
+  function showStart(){el("app").className="app hidden";el("start").className="start";window.scrollTo(0,0);}
+
   function displayTime(time){
     var a=time.split(":"); var h=Number(a[0]); var m=a[1];
     if(timeMode===24) return String(h).padStart(2,"0")+":"+m;
     var s=h<12?"AM":"PM"; var hh=h%12; if(hh===0) hh=12;
     return String(hh).padStart(2,"0")+":"+m+" "+s;
   }
-  function displayRange(a,b){
-    return a+"~"+b;
-  }
   function mainText(item){
-    var first = "";
-    if(item.type && item.content) first = item.type + " " + item.content;
-    else if(item.type) first = item.type;
-    else if(item.content) first = item.content;
-    return first;
+    if(item.type && item.content) return item.type+" "+item.content;
+    if(item.type) return item.type;
+    if(item.content) return item.content;
+    return "";
   }
   function safeText(v){return (v||"").replace(/[<>&]/g,function(ch){return {"<":"&lt;",">":"&gt;","&":"&amp;"}[ch];});}
+  function hourHeight(){
+    var v=getComputedStyle(document.documentElement).getPropertyValue("--hour-h").trim();
+    return Number(v.replace("px","")) || 76;
+  }
 
   function setMode(mode){
     timeMode=mode;
@@ -357,13 +385,11 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
     var start=el("dayStart").value;
     var end=el("dayEnd").value;
     if(toMin(end)<=toMin(start)){alert("마지막 시간은 시작 시간보다 늦어야 합니다.");return;}
-
     state.title=title;
     state.startDay=start;
     state.endDay=end;
     state.made=true;
     saveLocal();
-
     el("titleView").value=state.title;
     form.startTime=start;
     form.endTime=toTime(Math.min(toMin(start)+60,toMin(end)));
@@ -431,89 +457,101 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
     renderDays(); renderTypes(); updatePreview();
   }
 
-  function updatePreview(){
-    var temp={type:form.type,content:form.content,note:form.note,startTime:form.startTime,endTime:form.endTime};
-    var mt=mainText(temp);
-    el("preview").style.background=form.cellColor;
-    el("preview").style.color=form.textColor;
-    el("preview").innerHTML=
-      '<div class="event-content">'+
+  function blockHTML(item){
+    var mt=mainText(item);
+    return '<div class="event-content">'+
       (mt?'<div class="event-main">'+safeText(mt)+'</div>':'')+
-      '<div class="event-time">'+safeText(displayRange(form.startTime,form.endTime))+'</div>'+
-      (form.note?'<div class="event-note">'+safeText(form.note)+'</div>':'')+
+      '<div class="event-time">'+safeText(item.startTime+"~"+item.endTime)+'</div>'+
+      (item.note?'<div class="event-note">'+safeText(item.note)+'</div>':'')+
       '</div>';
   }
 
-  function getStartingItem(day,m){
-    return state.items.find(function(it){
-      return it.days.indexOf(day)>=0 && toMin(it.startTime)===m;
-    });
-  }
-  function isCovered(day,m){
-    return state.items.some(function(it){
-      var s=toMin(it.startTime), e=toMin(it.endTime);
-      return it.days.indexOf(day)>=0 && s<m && m<e;
-    });
+  function updatePreview(){
+    var temp={type:form.type,content:form.content,note:form.note,startTime:form.startTime,endTime:form.endTime};
+    el("preview").style.background=form.cellColor;
+    el("preview").style.color=form.textColor;
+    el("preview").innerHTML=blockHTML(temp);
   }
 
   function renderTable(){
-    var table=el("table");
-    table.innerHTML="";
-    var thead=document.createElement("thead");
-    var hr=document.createElement("tr");
-    hr.innerHTML="<th class='time'>시간</th>"+DAYS.map(function(d){return "<th>"+d+"</th>";}).join("");
-    thead.appendChild(hr); table.appendChild(thead);
+    var wrap=el("timetable");
+    wrap.innerHTML="";
+    var start=Math.floor(toMin(state.startDay)/60)*60;
+    var end=Math.ceil(toMin(state.endDay)/60)*60;
+    var h=hourHeight();
+    var totalHeight=((end-start)/60)*h;
 
-    var tbody=document.createElement("tbody");
-    var start=Math.floor(toMin(state.startDay)/30)*30;
-    var end=Math.ceil(toMin(state.endDay)/30)*30;
+    var corner=document.createElement("div");
+    corner.className="corner";
+    corner.textContent="시간";
+    corner.style.gridColumn="1";
+    corner.style.gridRow="1";
+    wrap.appendChild(corner);
 
-    for(var m=start;m<end;m+=30){
-      var time=toTime(m);
-      var tr=document.createElement("tr");
-      tr.innerHTML='<td class="time">'+displayTime(time)+"</td>";
+    DAYS.forEach(function(day,idx){
+      var head=document.createElement("div");
+      head.className="day-head";
+      head.textContent=day;
+      head.style.gridColumn=(idx+2);
+      head.style.gridRow="1";
+      wrap.appendChild(head);
+    });
 
-      DAYS.forEach(function(day){
-        var td=document.createElement("td");
-
-        var item=getStartingItem(day,m);
-        if(item){
-          var span=Math.max(1, Math.ceil((toMin(item.endTime)-toMin(item.startTime))/30));
-          td.rowSpan=span;
-          td.style.background=item.cellColor;
-          td.style.color=item.textColor;
-          td.onclick=function(){openEdit(item);};
-
-          var btn=document.createElement("button");
-          btn.type="button";
-          btn.className="event-cell";
-          btn.style.background=item.cellColor;
-          btn.style.color=item.textColor;
-          var mt=mainText(item);
-          btn.innerHTML='<div class="event-content">'+
-            (mt?'<div class="event-main">'+safeText(mt)+'</div>':'')+
-            '<div class="event-time">'+safeText(displayRange(item.startTime,item.endTime))+'</div>'+
-            (item.note?'<div class="event-note">'+safeText(item.note)+'</div>':'')+
-            '</div>';
-          btn.onclick=function(e){e.stopPropagation();openEdit(item);};
-          td.appendChild(btn);
-        } else if(isCovered(day,m)){
-          return;
-        } else {
-          td.onclick=function(){openNew(day,time);};
-          td.innerHTML='<div class="empty">클릭하여 입력</div>';
-        }
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
+    var timeCol=document.createElement("div");
+    timeCol.className="time-col";
+    timeCol.style.height=totalHeight+"px";
+    for(var m=start;m<end;m+=60){
+      var lab=document.createElement("div");
+      lab.className="time-label";
+      lab.textContent=displayTime(toTime(m));
+      timeCol.appendChild(lab);
     }
-    table.appendChild(tbody);
+    wrap.appendChild(timeCol);
+
+    DAYS.forEach(function(day,idx){
+      var col=document.createElement("div");
+      col.className="day-col";
+      col.style.gridColumn=(idx+2);
+      col.style.height=totalHeight+"px";
+
+      for(var m=start;m<end;m+=60){
+        var bg=document.createElement("div");
+        bg.className="hour-bg";
+        (function(dayCopy,timeCopy){
+          bg.addEventListener("click",function(){openNew(dayCopy,timeCopy);});
+        })(day,toTime(m));
+        var half=document.createElement("div");
+        half.className="half-guide";
+        bg.appendChild(half);
+        col.appendChild(bg);
+      }
+
+      var dayItems=state.items.filter(function(it){return it.days.indexOf(day)>=0;});
+      dayItems.forEach(function(it){
+        var s=toMin(it.startTime), e=toMin(it.endTime);
+        var top=((s-start)/60)*h;
+        var height=Math.max(28,((e-s)/60)*h);
+        var btn=document.createElement("button");
+        btn.type="button";
+        btn.className="event-block";
+        btn.style.top=top+"px";
+        btn.style.height=height+"px";
+        btn.style.background=it.cellColor;
+        btn.style.color=it.textColor;
+        btn.innerHTML=blockHTML(it);
+        btn.addEventListener("click",function(ev){ev.stopPropagation();openEdit(it);});
+        col.appendChild(btn);
+      });
+
+      wrap.appendChild(col);
+    });
+
     renderList();
   }
 
   function openNew(day,time){
     selectedId=null;
-    form={days:[day],startTime:time,endTime:toTime(Math.min(toMin(time)+30,toMin(state.endDay))),type:"",content:"",note:"",cellColor:"#fff4cc",textColor:"#111827"};
+    form={days:[day],startTime:time,endTime:toTime(Math.min(toMin(time)+60,toMin(state.endDay))),type:"",content:"",note:"",cellColor:"#fff4cc",textColor:"#111827"};
     fillForm();
     if(window.innerWidth<=900) document.querySelector(".panel").scrollIntoView({behavior:"smooth",block:"start"});
   }
@@ -522,6 +560,7 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
     selectedId=item.id;
     form=JSON.parse(JSON.stringify(item));
     if(form.note===undefined) form.note="";
+    if(form.type===undefined) form.type="";
     fillForm();
     if(window.innerWidth<=900) document.querySelector(".panel").scrollIntoView({behavior:"smooth",block:"start"});
   }
@@ -587,7 +626,7 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
   function downloadSchedule(){
     state.title=el("titleView").value.trim() || "나의 주간 시간표";
     saveLocal();
-    var data={app:"D.Flow Scheduler",version:"1.1",exportedAt:new Date().toISOString(),schedule:state};
+    var data={app:"D.Flow Scheduler",version:"1.2",exportedAt:new Date().toISOString(),schedule:state};
     var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
     var url=URL.createObjectURL(blob);
     var a=document.createElement("a");
@@ -605,7 +644,7 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
         var loaded=parsed.schedule||parsed;
         if(!loaded.startDay||!loaded.endDay||!Array.isArray(loaded.items)){alert("D.Flow 시간표 파일 형식이 아닙니다.");return;}
         state={title:loaded.title||"나의 주간 시간표",startDay:loaded.startDay,endDay:loaded.endDay,made:true,items:loaded.items||[]};
-        state.items=state.items.map(function(it){ if(it.note===undefined) it.note=""; return it; });
+        state.items=state.items.map(function(it){ if(it.note===undefined) it.note=""; if(it.type===undefined) it.type=""; return it; });
         selectedId=null; saveLocal();
         el("titleView").value=state.title;
         renderTable(); showApp();
@@ -627,6 +666,7 @@ input[type=color]{width:100%;height:36px;border:0;background:transparent}
     el("deleteBtn").addEventListener("click",deleteItem);
     el("titleView").addEventListener("input",function(){state.title=el("titleView").value;saveLocal();});
     ["startTime","endTime","content","note","cellColor","textColor"].forEach(function(id){el(id).addEventListener("input",syncForm);});
+    window.addEventListener("resize",function(){if(state.made) renderTable();});
   }
 
   loadLocal();
