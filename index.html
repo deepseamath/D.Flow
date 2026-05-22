@@ -24,7 +24,18 @@ input[type=text]{font-size:21px;font-weight:850}
 .mode button{flex:1;border:0;border-radius:999px;padding:11px;background:#e2e8f0;color:#607086;font-weight:900}
 .mode button.on{background:#506276;color:#fff}
 .main-btn{width:100%;border:0;border-radius:20px;padding:16px;background:#506276;color:white;font-size:18px;font-weight:950;box-shadow:0 14px 28px rgba(80,98,118,.25)}
+.main-btn.soft{background:#e2e8f0;color:#506276;box-shadow:none}
+.start-buttons{margin-top:4px}
 .start-sub{margin-top:14px;text-align:center;color:#64748b;font-size:13px;font-weight:750}
+.start-credit{
+  margin-top:22px;
+  text-align:center;
+  color:#94a3b8;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.2px;
+  opacity:.55;
+}
 
 .app{min-height:100vh;padding:10px}
 .top{background:#506276;border-radius:22px;padding:15px;color:white;margin-bottom:10px;display:grid;grid-template-columns:1fr;gap:10px}
@@ -104,6 +115,7 @@ input[type=color]{width:100%;height:42px;border:0;background:transparent;cursor:
   .actions{grid-template-columns:repeat(2,1fr)}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
 <section id="start" class="start">
@@ -115,8 +127,9 @@ input[type=color]{width:100%;height:42px;border:0;background:transparent;cursor:
       <div class="field"><label>나의 하루 시작 시간</label><input id="dayStart" type="time" value="08:00"></div>
       <div class="field"><label>나의 하루 마지막 시간</label><input id="dayEnd" type="time" value="22:00"></div>
     </div>
-    <button id="makeBtn" class="main-btn" type="button">표 만들기</button>
+    <div class="grid2 start-buttons"><button id="makeBtn" class="main-btn" type="button">표 만들기</button><button id="openSavedBtn" class="main-btn soft" type="button">저장한 시간표 보기</button></div>
     <div class="start-sub">시간표는 제목을 기준으로 저장하고 불러올 수 있습니다.</div>
+    <div class="start-credit">© 심해수학 · D.Flow</div>
   </div>
 </section>
 
@@ -129,7 +142,7 @@ input[type=color]{width:100%;height:42px;border:0;background:transparent;cursor:
       <button id="saveScheduleBtn" class="primary" type="button">시간표 저장</button>
       <button id="loadScheduleBtn" type="button">불러오기</button>
       <button id="newScheduleBtn" type="button">새 시간표</button>
-      <button id="imageBtn" type="button">JPG 저장</button>
+      <button id="imageBtn" type="button">사진으로 저장(다운로드)</button>
       <button id="backupBtn" type="button">자료 백업</button>
       <button id="settingBtn" type="button">시간 설정</button>
     </div>
@@ -533,58 +546,70 @@ input[type=color]{width:100%;height:42px;border:0;background:transparent;cursor:
   }
   function backupData(){
     state.title=el("titleView").value.trim()||state.title; updateCurrentInLibrary(); saveLibrary();
-    var data={app:"D.Flow Scheduler",version:"2.3",exportedAt:new Date().toISOString(),library:library};
+    var data={app:"D.Flow Scheduler",version:"2.7",exportedAt:new Date().toISOString(),library:library};
     var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}), url=URL.createObjectURL(blob), a=document.createElement("a");
     a.href=url; a.download="D.Flow_전체시간표_백업.json"; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
   function imageDownload(){
-    state.title=el("titleView").value.trim()||state.title; updateCurrentInLibrary(); saveLibrary();
-    el("exportTitle").textContent=state.title;
-    var card=el("captureCard"), wrap=document.querySelector(".timetable-wrap"), oldScroll=wrap.scrollLeft;
-    card.classList.add("exporting"); wrap.scrollLeft=0;
-    setTimeout(function(){
-      try{
-        var width=card.scrollWidth, height=card.scrollHeight, clone=card.cloneNode(true);
-        clone.style.width=width+"px"; clone.style.height=height+"px"; clone.style.boxShadow="none"; clone.style.borderRadius="0"; clone.style.background="white";
-        var styleText="";
-        Array.from(document.styleSheets).forEach(function(sheet){try{Array.from(sheet.cssRules).forEach(function(rule){styleText += rule.cssText + "\\n";});}catch(e){}});
-        var html='<div xmlns="http://www.w3.org/1999/xhtml"><style>'+styleText+'</style>'+clone.outerHTML+'</div>';
-        var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+width+'" height="'+height+'"><foreignObject width="100%" height="100%">'+html+'</foreignObject></svg>';
-        var blob=new Blob([svg],{type:"image/svg+xml;charset=utf-8"}), url=URL.createObjectURL(blob), img=new Image();
-        img.onload=function(){
-          var canvas=document.createElement("canvas"); canvas.width=width*2; canvas.height=height*2;
-          var ctx=canvas.getContext("2d"); ctx.fillStyle="white"; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.scale(2,2); ctx.drawImage(img,0,0); URL.revokeObjectURL(url);
-          canvas.toBlob(function(jpg){
-            var a=document.createElement("a"); a.href=URL.createObjectURL(jpg); a.download=(state.title.replace(/[\\/:*?\"<>|]/g,"_").slice(0,30)||"dflow")+"_시간표.jpg";
-            document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
-          },"image/jpeg",0.92);
-          card.classList.remove("exporting"); wrap.scrollLeft=oldScroll;
-        };
-        img.onerror=function(){card.classList.remove("exporting"); wrap.scrollLeft=oldScroll; alert("이 브라우저에서는 JPG 저장이 제한될 수 있습니다. 화면 캡처를 사용해 주세요.");};
-        img.src=url;
-      }catch(e){card.classList.remove("exporting"); wrap.scrollLeft=oldScroll; alert("JPG 저장 중 오류가 발생했습니다.");}
-    },200);
-  }
-  function applyTableTime(){
-    var start=el("tableStart").value;
-    var end=el("tableEnd").value;
-    if(toMin(end)<=toMin(start)){
-      alert("마지막 시간은 시작 시간보다 늦어야 합니다.");
-      return;
-    }
-    state.startDay=start;
-    state.endDay=end;
+    state.title=el("titleView").value.trim()||state.title;
     updateCurrentInLibrary();
     saveLibrary();
-    renderTable();
-    fillForm();
-    alert("시간표 시간이 수정되었습니다.");
+    el("exportTitle").textContent=state.title;
+
+    var card=el("captureCard");
+    var wrap=document.querySelector(".timetable-wrap");
+    var oldScroll=wrap.scrollLeft;
+    var oldOverflow=wrap.style.overflow;
+
+    if(typeof html2canvas==="undefined"){
+      alert("이미지 저장 기능을 불러오지 못했습니다. 인터넷 연결 후 다시 시도해 주세요.");
+      return;
+    }
+
+    card.classList.add("exporting");
+    wrap.scrollLeft=0;
+    wrap.style.overflow="visible";
+
+    setTimeout(function(){
+      html2canvas(card,{
+        backgroundColor:"#ffffff",
+        scale:2,
+        useCORS:true,
+        allowTaint:true,
+        scrollX:0,
+        scrollY:0,
+        windowWidth:card.scrollWidth,
+        windowHeight:card.scrollHeight
+      }).then(function(canvas){
+        canvas.toBlob(function(blob){
+          if(!blob){
+            alert("이미지 파일 생성에 실패했습니다.");
+            return;
+          }
+          var url=URL.createObjectURL(blob);
+          var a=document.createElement("a");
+          a.href=url;
+          a.download=(state.title.replace(/[\\/:*?\"<>|]/g,"_").slice(0,30)||"dflow")+"_시간표.png";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(function(){URL.revokeObjectURL(url);},1000);
+        },"image/png");
+      }).catch(function(){
+        alert("사진 저장 중 오류가 발생했습니다. PC 크롬에서 다시 시도하거나 화면 캡처를 사용해 주세요.");
+      }).finally(function(){
+        card.classList.remove("exporting");
+        wrap.scrollLeft=oldScroll;
+        wrap.style.overflow=oldOverflow;
+      });
+    },300);
   }
 
   function bind(){
     el("btn12").addEventListener("click",function(){timeMode=12;el("btn12").className="on";el("btn24").className="";if(state)renderTable();});
     el("btn24").addEventListener("click",function(){timeMode=24;el("btn12").className="";el("btn24").className="on";if(state)renderTable();});
     el("makeBtn").addEventListener("click",makeTable);
+    el("openSavedBtn").addEventListener("click",loadScheduleByTitle);
     el("applyTableTimeBtn").addEventListener("click",applyTableTime);
     el("saveCellColorBtn").addEventListener("click",function(){addCustomColor("cell",el("cellColor").value);});
     el("saveTextColorBtn").addEventListener("click",function(){addCustomColor("text",el("textColor").value);});
