@@ -95,6 +95,15 @@ input[type=color]{width:100%;height:42px;border:0;background:transparent;cursor:
 .list button{width:100%;border:1px solid transparent;border-radius:14px;background:white;padding:10px;margin-bottom:8px;text-align:left}
 .copy{margin-top:13px;text-align:center;color:#9aa8b8;font-size:12px}
 .copy span{background:rgba(255,255,255,.75);border-radius:999px;padding:5px 12px}
+.compare-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.compare-card{background:#f8fafc;border:1px solid #dbe1e8;border-radius:18px;padding:10px;max-height:300px;overflow:auto}
+.compare-card button{width:100%;border:0;background:white;border-radius:12px;padding:12px;margin-bottom:8px;text-align:left;font-weight:800;color:#334155}
+.compare-card button:hover{background:#eef3f6}
+.compare-title{font-size:14px;font-weight:900;margin-bottom:10px;color:#506276}
+.dual-view{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dual-view .card{min-width:0}
+@media(max-width:900px){.dual-view{grid-template-columns:1fr}}
+
 
 .exporting{background:white!important;color:#263445!important;padding:18px!important}
 .exporting .guide,.exporting .copy{display:none!important}
@@ -353,21 +362,84 @@ input[type=color]{width:100%;height:42px;border:0;background:transparent;cursor:
     renderAll();
     alert("시간표가 '" + title + "' 이름으로 저장되었습니다.");
   }
-  function loadScheduleByTitle(){
-    if(library.schedules.length===0){alert("저장된 시간표가 없습니다.");return;}
-    var names=library.schedules.map(function(s,i){return (i+1)+". "+(s.title||"제목 없음");}).join("\\n");
-    var input=prompt("불러올 시간표 번호 또는 제목을 입력하세요.\\n\\n"+names);
-    if(input===null) return;
-    input=input.trim();
-    if(!input) return;
-    var selected=null;
-    var num=Number(input);
-    if(!isNaN(num) && num>=1 && num<=library.schedules.length) selected=library.schedules[num-1];
-    else selected=findScheduleByTitle(input);
-    if(!selected){alert("해당 시간표를 찾지 못했습니다.");return;}
-    setActive(selected.id);
-    showApp();
+  
+function loadScheduleByTitle(){
+    if(library.schedules.length===0){
+      alert("저장된 시간표가 없습니다.");
+      return;
+    }
+
+    var overlay=document.createElement("div");
+    overlay.style.position="fixed";
+    overlay.style.inset="0";
+    overlay.style.background="rgba(15,23,42,.45)";
+    overlay.style.zIndex="9999";
+    overlay.style.display="flex";
+    overlay.style.alignItems="center";
+    overlay.style.justifyContent="center";
+    overlay.style.padding="18px";
+
+    var box=document.createElement("div");
+    box.style.background="white";
+    box.style.borderRadius="24px";
+    box.style.padding="18px";
+    box.style.width="min(760px,100%)";
+    box.style.maxHeight="80vh";
+    box.style.overflow="auto";
+
+    box.innerHTML='<div style="font-size:24px;font-weight:950;color:#334155;margin-bottom:16px">저장한 시간표</div>';
+
+    var wrap=document.createElement("div");
+    wrap.className="compare-wrap";
+
+    var left=document.createElement("div");
+    left.className="compare-card";
+    left.innerHTML='<div class="compare-title">기본 열기</div>';
+
+    var right=document.createElement("div");
+    right.className="compare-card";
+    right.innerHTML='<div class="compare-title">2개 비교 보기</div>';
+
+    library.schedules.forEach(function(s){
+      var btn=document.createElement("button");
+      btn.innerHTML='<div style="font-size:16px">'+(s.title||"제목 없음")+'</div><div style="font-size:12px;color:#94a3b8;margin-top:4px">'+s.startDay+' ~ '+s.endDay+'</div>';
+      btn.addEventListener("click",function(){
+        setActive(s.id);
+        document.body.removeChild(overlay);
+        showApp();
+      });
+      left.appendChild(btn);
+
+      var btn2=document.createElement("button");
+      btn2.innerHTML='<div style="font-size:16px">'+(s.title||"제목 없음")+'</div><div style="font-size:12px;color:#94a3b8;margin-top:4px">현재 시간표와 함께 보기</div>';
+      btn2.addEventListener("click",function(){
+        openDualView(s.id);
+        document.body.removeChild(overlay);
+      });
+      right.appendChild(btn2);
+    });
+
+    wrap.appendChild(left);
+    wrap.appendChild(right);
+    box.appendChild(wrap);
+
+    var close=document.createElement("button");
+    close.textContent="닫기";
+    close.style.marginTop="14px";
+    close.style.width="100%";
+    close.style.border="0";
+    close.style.borderRadius="14px";
+    close.style.padding="13px";
+    close.style.background="#506276";
+    close.style.color="white";
+    close.style.fontWeight="900";
+    close.onclick=function(){document.body.removeChild(overlay);};
+
+    box.appendChild(close);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
   }
+
   function setActive(id){
     var s=library.schedules.find(function(x){return x.id===id;});
     if(!s) return;
@@ -546,7 +618,7 @@ input[type=color]{width:100%;height:42px;border:0;background:transparent;cursor:
   }
   function backupData(){
     state.title=el("titleView").value.trim()||state.title; updateCurrentInLibrary(); saveLibrary();
-    var data={app:"D.Flow Scheduler",version:"2.7",exportedAt:new Date().toISOString(),library:library};
+    var data={app:"D.Flow Scheduler",version:"2.8",exportedAt:new Date().toISOString(),library:library};
     var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}), url=URL.createObjectURL(blob), a=document.createElement("a");
     a.href=url; a.download="D.Flow_전체시간표_백업.json"; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
@@ -603,6 +675,91 @@ input[type=color]{width:100%;height:42px;border:0;background:transparent;cursor:
         wrap.style.overflow=oldOverflow;
       });
     },300);
+  }
+
+
+  function renderMiniTable(schedule){
+    var days=schedule.visibleDays||["월","화","수","목","금"];
+    var start=Math.floor(toMin(schedule.startDay)/60)*60;
+    var end=Math.ceil(toMin(schedule.endDay)/60)*60;
+
+    var out='<div style="font-size:18px;font-weight:950;margin-bottom:10px;color:#334155">'+schedule.title+'</div>';
+    out+='<div style="overflow:auto"><table style="border-collapse:collapse;width:100%;min-width:500px;background:white">';
+    out+='<tr><th style="border:1px solid #cbd5e1;padding:8px;background:#dce5ec">시간</th>';
+
+    days.forEach(function(d){
+      out+='<th style="border:1px solid #cbd5e1;padding:8px;background:#dce5ec">'+d+'</th>';
+    });
+
+    out+='</tr>';
+
+    for(var m=start;m<end;m+=60){
+      out+='<tr>';
+      out+='<td style="border:1px solid #dbe1e8;padding:8px;font-weight:900;background:#f8fafc">'+displayTime(toTime(m))+'</td>';
+
+      days.forEach(function(day){
+        var items=schedule.items.filter(function(it){
+          return it.days.indexOf(day)>=0 && toMin(it.startTime)<m+60 && toMin(it.endTime)>m;
+        });
+
+        var cell='';
+        items.forEach(function(it){
+          var t=mainText(it);
+          cell+='<div style="background:'+it.cellColor+';color:'+it.textColor+';padding:6px;border-radius:8px;margin-bottom:4px;font-size:12px;font-weight:800">'+t+'</div>';
+        });
+
+        out+='<td style="border:1px solid #dbe1e8;padding:6px;vertical-align:top">'+cell+'</td>';
+      });
+
+      out+='</tr>';
+    }
+
+    out+='</table></div>';
+    return out;
+  }
+
+  function openDualView(compareId){
+    var target=library.schedules.find(function(s){return s.id===compareId;});
+    if(!target) return;
+
+    var overlay=document.createElement("div");
+    overlay.style.position="fixed";
+    overlay.style.inset="0";
+    overlay.style.background="rgba(15,23,42,.5)";
+    overlay.style.zIndex="9999";
+    overlay.style.overflow="auto";
+    overlay.style.padding="16px";
+
+    var wrap=document.createElement("div");
+    wrap.className="dual-view";
+
+    var left=document.createElement("div");
+    left.className="card";
+    left.innerHTML=renderMiniTable(state);
+
+    var right=document.createElement("div");
+    right.className="card";
+    right.innerHTML=renderMiniTable(target);
+
+    wrap.appendChild(left);
+    wrap.appendChild(right);
+
+    var close=document.createElement("button");
+    close.textContent="닫기";
+    close.style.position="fixed";
+    close.style.right="18px";
+    close.style.top="18px";
+    close.style.border="0";
+    close.style.borderRadius="14px";
+    close.style.padding="12px 18px";
+    close.style.background="#506276";
+    close.style.color="white";
+    close.style.fontWeight="900";
+    close.onclick=function(){document.body.removeChild(overlay);};
+
+    overlay.appendChild(wrap);
+    overlay.appendChild(close);
+    document.body.appendChild(overlay);
   }
 
   function bind(){
